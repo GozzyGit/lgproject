@@ -1,3 +1,3 @@
 output "name" {
-  value = var.name
+  value = azurerm_resource_group.rg.name
 }
