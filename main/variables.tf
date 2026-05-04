@@ -1,9 +1,11 @@
 variable "location" {
-  default = "uksouth"
+  default = "westeurope"
 }
 
 variable "name_prefix" {
   default = "lg"
 }
 
-variable "email_to" {}
+variable "email_to" {
+  default = "lee.gosling876@outlook.com"
+}
