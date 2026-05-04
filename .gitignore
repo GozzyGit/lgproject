@@ -1,0 +1,23 @@
+@'
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+
+# local tfvars (secrets)
+*.tfvars
+!terraform.tfvars.example
+
+# Azure
+.azure/
+
+# Python
+__pycache__/
+*.pyc
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
