@@ -18,12 +18,3 @@ module "key_vault" {
   location            = var.location
 }
 
-module "cost_function" {
-  source              = "./modules/cost_function"
-  name                = local.func_name
-  resource_group_name = module.resource_group.name
-  location            = var.location
-
-  storage_account_name       = module.storage.storage_account_name
-  storage_account_access_key = module.storage.primary_access_key
-}

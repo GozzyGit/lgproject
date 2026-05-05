@@ -3,7 +3,7 @@ variable "location" {
 }
 
 variable "name_prefix" {
-  default = "lg"
+  default = "lgproject"
 }
 
 variable "email_to" {
