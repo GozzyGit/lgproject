@@ -5,7 +5,7 @@ resource "azurerm_key_vault" "kv" {
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = "standard"
 }
-
+   
 data "azurerm_client_config" "current" {}
 
 output "key_vault_name" {
