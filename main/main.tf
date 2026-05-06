@@ -25,7 +25,7 @@ module "key_vault" {
 data "azurerm_subscription" "primary" {}
 
 # --------------------------
-# App Service Plan for Logic App
+# App Service Plan for Logic App Standard
 # --------------------------
 resource "azurerm_service_plan" "logic" {
   name                = "${var.name_prefix}-logic-plan"
@@ -40,7 +40,7 @@ resource "azurerm_service_plan" "logic" {
 # Logic App Standard
 # --------------------------
 resource "azurerm_logic_app_standard" "finops" {
-  name                = "${var.name_prefix}-logic-finops"
+  name                = "lgproject-logic-finops"
   location            = var.location
   resource_group_name = module.resource_group.name
   app_service_plan_id = azurerm_service_plan.logic.id
@@ -66,4 +66,25 @@ resource "azurerm_role_assignment" "cost_reader" {
   scope                = data.azurerm_subscription.primary.id
   role_definition_name = "Cost Management Reader"
   principal_id         = azurerm_logic_app_standard.finops.identity[0].principal_id
+
+  # Ensure the identity exists before assigning the role
+  depends_on = [azurerm_logic_app_standard.finops]
+}
+
+# --------------------------
+# Outputs
+# --------------------------
+output "logic_app_name" {
+  value       = azurerm_logic_app_standard.finops.name
+  description = "Logic App Standard name"
+}
+
+output "logic_app_id" {
+  value       = azurerm_logic_app_standard.finops.id
+  description = "Logic App Standard resource ID"
+}
+
+output "logic_app_principal_id" {
+  value       = azurerm_logic_app_standard.finops.identity[0].principal_id
+  description = "Logic App System-assigned Managed Identity Principal ID"
 }

@@ -4,6 +4,7 @@ resource "azurerm_logic_app_standard" "finops" {
   resource_group_name = var.resource_group_name
   app_service_plan_id = var.app_service_plan_id
 
+  # Standard Logic App needs storage account
   storage_account_name       = var.storage_account_name
   storage_account_access_key = var.storage_account_access_key
 
@@ -11,6 +12,7 @@ resource "azurerm_logic_app_standard" "finops" {
     type = "SystemAssigned"
   }
 
+  # App settings
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME = "python"
     WEBSITE_RUN_FROM_PACKAGE = "1"
@@ -18,6 +20,7 @@ resource "azurerm_logic_app_standard" "finops" {
   }
 }
 
+# Outputs
 output "principal_id" {
   value       = azurerm_logic_app_standard.finops.identity[0].principal_id
   description = "Principal ID of the system-assigned identity"
