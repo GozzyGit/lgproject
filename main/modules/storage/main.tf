@@ -8,17 +8,17 @@ resource "azurerm_storage_account" "sa" {
 
 resource "azurerm_storage_container" "sqldata" {
   name                 = "sqldata"
-  storage_account_name = azurerm_storage_account.sa.name
+  storage_account_id = azurerm_storage_account.sa.id
 }
 
 resource "azurerm_storage_container" "webdata" {
   name                 = "webdata"
-  storage_account_name = azurerm_storage_account.sa.name
+  storage_account_id = azurerm_storage_account.sa.id
 }
 
 resource "azurerm_storage_container" "logs" {
   name                 = "logs"
-  storage_account_name = azurerm_storage_account.sa.name
+  storage_account_id = azurerm_storage_account.sa.id
 }
 
 output "storage_account_name" {
