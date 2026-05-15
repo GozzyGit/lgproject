@@ -1,3 +1,7 @@
+# --------------------------
+# Resource Group, Storage, Key Vault
+# --------------------------
+
 module "resource_group" {
   source   = "./modules/resource_group"
   name     = local.rg_name
@@ -18,12 +22,69 @@ module "key_vault" {
   location            = var.location
 }
 
-module "cost_function" {
-  source              = "./modules/cost_function"
-  name                = local.func_name
-  resource_group_name = module.resource_group.name
-  location            = var.location
+data "azurerm_subscription" "primary" {}
 
-  storage_account_name       = module.storage.storage_account_name
+# --------------------------
+# App Service Plan for Logic App Standard
+# --------------------------
+resource "azurerm_service_plan" "logic" {
+  name                = "${var.name_prefix}-logic-plan"
+  location            = var.location
+  resource_group_name = module.resource_group.name
+
+  os_type  = "Linux"
+  sku_name = "WS1"
+}
+
+# --------------------------
+# Logic App Standard
+# --------------------------
+resource "azurerm_logic_app_standard" "finops" {
+  name                = "lgproject-logic-finops"
+  location            = var.location
+  resource_group_name = module.resource_group.name
+  app_service_plan_id = azurerm_service_plan.logic.id
+
+  storage_account_name       = module.storage.name
   storage_account_access_key = module.storage.primary_access_key
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "python"
+    WEBSITE_RUN_FROM_PACKAGE = "1"
+    EMAIL_TO                 = var.email_to
+  }
+}
+
+# --------------------------
+# Role Assignment for Logic App Managed Identity
+# --------------------------
+resource "azurerm_role_assignment" "cost_reader" {
+  scope                = data.azurerm_subscription.primary.id
+  role_definition_name = "Cost Management Reader"
+  principal_id         = azurerm_logic_app_standard.finops.identity[0].principal_id
+
+  # Ensure the identity exists before assigning the role
+  depends_on = [azurerm_logic_app_standard.finops]
+}
+
+# --------------------------
+# Outputs
+# --------------------------
+output "logic_app_name" {
+  value       = azurerm_logic_app_standard.finops.name
+  description = "Logic App Standard name"
+}
+
+output "logic_app_id" {
+  value       = azurerm_logic_app_standard.finops.id
+  description = "Logic App Standard resource ID"
+}
+
+output "logic_app_principal_id" {
+  value       = azurerm_logic_app_standard.finops.identity[0].principal_id
+  description = "Logic App System-assigned Managed Identity Principal ID"
 }
