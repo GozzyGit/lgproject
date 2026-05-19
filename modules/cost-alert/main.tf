@@ -3,16 +3,18 @@ resource "azurerm_consumption_budget_subscription" "budget" {
   subscription_id = var.subscription_id
 
   amount     = var.amount
-  time_grain = "Daily"
+  time_grain = "Monthly"
 
   time_period {
     start_date = var.start_date
   }
 
   notification {
-    enabled       = true
-    threshold     = var.threshold
-    operator      = "GreaterThan"
+    enabled        = true
+    threshold      = var.threshold
+    operator       = "GreaterThan"
+    threshold_type = "Actual"
+
     contact_emails = var.emails
   }
 }
