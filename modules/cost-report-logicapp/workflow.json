@@ -1,0 +1,119 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+
+  "parameters": {
+    "logicAppName": { "type": "string" },
+    "location": { "type": "string" },
+    "devRg": { "type": "string" },
+    "prodRg": { "type": "string" }
+  },
+
+  "resources": [
+    {
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2019-05-01",
+      "name": "[parameters('logicAppName')]",
+      "location": "[parameters('location')]",
+
+      "properties": {
+        "state": "Enabled",
+
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+
+          "triggers": {
+          "Recurrence": {
+          "type": "Recurrence",
+          "recurrence": {
+            "frequency": "Day",
+            "interval": 1,
+            "schedule": {
+              "hours": [8],
+              "minutes": [0]
+            }
+          }
+          }          },
+
+          "actions": {
+
+            "DEV_Cost": {
+              "type": "Http",
+              "inputs": {
+                "method": "POST",
+                "uri": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('devRg'), '/providers/Microsoft.CostManagement/query?api-version=2023-03-01')]",
+                "headers": { "Content-Type": "application/json" },
+                "body": {
+                  "type": "ActualCost",
+                  "timeframe": "Yesterday",
+                  "dataset": {
+                    "aggregation": {
+                      "totalCost": {
+                        "name": "Cost",
+                        "function": "Sum"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+
+            "PROD_Cost": {
+              "type": "Http",
+              "inputs": {
+                "method": "POST",
+                "uri": "[concat('https://management.azure.com/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('prodRg'), '/providers/Microsoft.CostManagement/query?api-version=2023-03-01')]",
+                "headers": { "Content-Type": "application/json" },
+                "body": {
+                  "type": "ActualCost",
+                  "timeframe": "Yesterday",
+                  "dataset": {
+                    "aggregation": {
+                      "totalCost": {
+                        "name": "Cost",
+                        "function": "Sum"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+
+            "Compose_HTML": {
+              "type": "Compose",
+              "inputs": "Daily Azure Cost Report generated successfully. Check Logic App run history for DEV and PROD cost outputs."
+            },
+
+            "Send_Email": {
+              "type": "Http",
+              "inputs": {
+                "method": "POST",
+                "uri": "https://graph.microsoft.com/v1.0/me/sendMail",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": {
+                  "message": {
+                    "subject": "Daily Azure Cost Report (DEV vs PROD)",
+                    "body": {
+                      "contentType": "HTML",
+                      "content": "Cost report executed. Check Logic App run history for DEV and PROD cost outputs."
+                    },
+                    "toRecipients": [
+                      {
+                        "emailAddress": {
+                          "address": "lee.gosling876@outlook.com"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
