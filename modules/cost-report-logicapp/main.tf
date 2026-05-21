@@ -21,9 +21,13 @@ resource "azurerm_resource_group_template_deployment" "logicapp" {
   resource_group_name = var.rg_name
   deployment_mode     = "Incremental"
 
+  template_content = file("${path.module}/workflow.json")
+
   parameters_content = jsonencode({
     logicAppName = { value = "cost-report" }
     location     = { value = var.location }
+    devRg        = { value = var.rg_name }
+    prodRg       = { value = var.rg_name }
 
     "$connections" = {
       value = {
@@ -35,6 +39,4 @@ resource "azurerm_resource_group_template_deployment" "logicapp" {
       }
     }
   })
-
-  template_content = file("${path.module}/workflow.json")
 }
