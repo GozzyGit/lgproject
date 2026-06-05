@@ -15,3 +15,4 @@ module "infra" {
   prefix   = var.prefix
   location = var.location
 }
+

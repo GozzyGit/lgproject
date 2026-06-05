@@ -17,7 +17,3 @@ module "keyvault" {
   rg_name  = module.rg.name
   location = var.location
 }
-
-output "resource_group_name" {
-  value = module.rg.name
-}
