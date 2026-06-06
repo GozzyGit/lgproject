@@ -16,6 +16,16 @@ module "infra" {
   location = var.location
 }
 
+
+module "dashboard" {
+  source   = "../../modules/dashboard"
+  prefix   = var.prefix
+  location = var.location
+}
+
+
+
+
 output "resource_group_name" {
   value = module.infra.rg_name
 }
