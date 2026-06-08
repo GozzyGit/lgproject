@@ -17,3 +17,10 @@ module "keyvault" {
   rg_name  = module.rg.name
   location = var.location
 }
+
+module "dashboard" {
+  source   = "../dashboard"
+  prefix   = var.prefix
+  rg_name  = module.rg.name
+  location = var.location
+}

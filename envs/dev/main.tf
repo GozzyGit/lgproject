@@ -17,11 +17,7 @@ module "infra" {
 }
 
 
-module "dashboard" {
-  source   = "../../modules/dashboard"
-  prefix   = var.prefix
-  location = var.location
-}
+
 
 
 
