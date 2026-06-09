@@ -1,0 +1,20 @@
+variable "storage_account_name" {
+  type = string
+}
+
+variable "storage_account_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "prefix" {
+  type = string
+}
+
+variable "location" {
+  type = string
+}
+
+variable "rg_name" {
+  type = string
+}
