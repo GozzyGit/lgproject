@@ -22,6 +22,7 @@ resource "azurerm_linux_function_app" "this" {
     application_stack {
       python_version = "3.11"
     }
+    }
 
   identity {
     type = "SystemAssigned"
