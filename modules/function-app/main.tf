@@ -18,11 +18,15 @@ resource "azurerm_linux_function_app" "this" {
   storage_account_name       = var.storage_account_name
   storage_account_access_key = var.storage_account_key
 
-    site_config {
-    application_stack {
-      python_version = "3.11"
-    }
-    }
+  site_config {
+  application_stack {
+    python_version = "3.11"
+  }
+  }  
+
+  app_settings = {
+  FUNCTIONS_WORKER_RUNTIME = "python"
+  }
 
   identity {
     type = "SystemAssigned"
