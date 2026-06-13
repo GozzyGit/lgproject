@@ -1,10 +1,3 @@
-module "naming" {
-  source  = "Azure/naming/azurerm"
-  version = "0.4.0"
-
-  suffix = [var.prefix, var.environment]
-}
-
 module "tags" {
   source = "../tags"
 
@@ -13,41 +6,27 @@ module "tags" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = module.naming.resource_group.name
+  name     = "${var.prefix}-${var.environment}-rg"
   location = var.location
-
-  tags = module.tags.tags
+  tags     = module.tags.tags
 }
 
-# -------------------------
-# STORAGE
-# -------------------------
 module "storage" {
   source   = "../storage"
-
   prefix   = var.prefix
   location = var.location
   rg_name  = azurerm_resource_group.rg.name
-
-  tags = module.tags.tags
+  tags     = module.tags.tags
 }
 
-# -------------------------
-# KEY VAULT
-# -------------------------
 module "keyvault" {
   source   = "../keyvault"
-
   prefix   = var.prefix
   location = var.location
   rg_name  = azurerm_resource_group.rg.name
-
-  tags = module.tags.tags
+  tags     = module.tags.tags
 }
 
-# -------------------------
-# FUNCTION APP
-# -------------------------
 module "function_app" {
   source = "../function-app"
 
@@ -61,15 +40,10 @@ module "function_app" {
   tags = module.tags.tags
 }
 
-# -------------------------
-# MONITORING
-# -------------------------
 module "monitoring" {
   source   = "../monitoring"
-
   prefix   = var.prefix
   location = var.location
   rg_name  = azurerm_resource_group.rg.name
-
-  tags = module.tags.tags
+  tags     = module.tags.tags
 }

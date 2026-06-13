@@ -1,7 +1,11 @@
-output "tfstate_resource_group" {
-  value = azurerm_resource_group.tfstate.name
+output "client_id" {
+  value = azuread_application.tf.client_id
 }
 
-output "tfstate_storage_account" {
-  value = azurerm_storage_account.tfstate.name
+output "tenant_id" {
+  value = data.azurerm_subscription.current.tenant_id
+}
+
+output "subscription_id" {
+  value = data.azurerm_subscription.current.id
 }

@@ -1,24 +1,10 @@
-variable "storage_account_name" {
-type = string
-}
-
+variable "prefix" {}
+variable "location" {}
+variable "rg_name" {}
+variable "storage_account_name" {}
 variable "storage_account_key" {
-type      = string
-sensitive = true
+  sensitive = true
 }
-
-variable "prefix" {
-type = string
-}
-
-variable "location" {
-type = string
-}
-
-variable "rg_name" {
-type = string
-}
-
 variable "tags" {
-type = map(string)
+  type = map(string)
 }
