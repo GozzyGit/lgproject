@@ -11,7 +11,10 @@ provider "azurerm" {
 }
 
 module "infra" {
-  source   = "../../modules/root-infra"
-  prefix   = var.prefix
-  location = var.location
+  source = "../../modules/root-infra"
+
+  prefix      = var.prefix
+  location    = var.location
+  environment = var.environment
+  tags        = var.tags
 }
